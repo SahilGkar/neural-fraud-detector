@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
+import json
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.metrics import (
     classification_report,
@@ -342,9 +343,89 @@ def main():
 
     results = evaluate_model(model, X_test, y_test, threshold=0.5)
 
+    # ── Save evaluation results to JSON for the web dashboard ──
+    cm = results['confusion_matrix']
+    tn, fp, fn, tp = cm.ravel()
+    accuracy = (tn + tp) / (tn + fp + fn + tp)
+    precision_legit = float(tn / (tn + fn)) if (tn + fn) > 0 else 0.0
+    recall_legit = float(tn / (tn + fp)) if (tn + fp) > 0 else 0.0
+    f1_legit = (2 * precision_legit * recall_legit / (precision_legit + recall_legit)
+                if (precision_legit + recall_legit) > 0 else 0.0)
+
+    eval_json = {
+        "confusion_matrix": {
+            "tn": int(tn), "fp": int(fp), "fn": int(fn), "tp": int(tp)
+        },
+        "metrics": {
+            "roc_auc": round(float(results['roc_auc']), 4),
+            "pr_auc": round(float(results['pr_auc']), 4),
+            "accuracy": round(float(accuracy), 4),
+            "precision_fraud": round(float(results['precision']), 4),
+            "recall_fraud": round(float(results['recall']), 4),
+            "f1_fraud": round(float(results['f1']), 4),
+            "precision_legit": round(precision_legit, 4),
+            "recall_legit": round(recall_legit, 4),
+            "f1_legit": round(f1_legit, 4),
+        },
+        "dataset": {
+            "total_train": int(len(y_train)),
+            "total_test": int(len(y_test)),
+            "fraud_rate_train": round(100 * float(np.mean(y_train)), 2),
+            "fraud_rate_test": round(100 * float(np.mean(y_test)), 2),
+        }
+    }
+    eval_path = os.path.join(data_dir, "evaluation_results.json")
+    with open(eval_path, "w") as f:
+        json.dump(eval_json, f, indent=2)
+
+    # ── Save training history to JSON for the web dashboard ──
+    h = history.history
+    epochs_completed = len(h['loss'])
+    val_loss_list = h.get('val_loss', [])
+    best_epoch = (int(np.argmin(val_loss_list)) + 1) if val_loss_list else epochs_completed
+    early_stopped = epochs_completed < 30  # max epochs configured above
+
+    try:
+        final_lr = float(model.optimizer.learning_rate.numpy())
+    except Exception:
+        final_lr = float(model.optimizer.learning_rate)
+
+    acc_key = 'accuracy' if 'accuracy' in h else 'acc'
+    val_acc_key = 'val_accuracy' if 'val_accuracy' in h else 'val_acc'
+
+    best_idx = best_epoch - 1  # convert 1-indexed to 0-indexed
+
+    training_json = {
+        "training": {
+            "epochs_completed": epochs_completed,
+            "best_epoch": best_epoch,
+            "early_stopped": early_stopped,
+            "final_train_acc": round(float(h[acc_key][best_idx]), 4),
+            "final_train_auc": round(float(h.get('auc', [0])[best_idx]), 4),
+            "final_val_acc": round(float(h.get(val_acc_key, [0])[best_idx]), 4),
+            "final_val_auc": round(float(h.get('val_auc', [0])[best_idx]), 4),
+            "final_val_loss": round(float(h.get('val_loss', [0])[best_idx]), 4),
+            "learning_rate_final": round(final_lr, 6),
+        },
+        "history": {
+            "epochs": list(range(1, epochs_completed + 1)),
+            "train_loss": [round(float(v), 4) for v in h['loss']],
+            "val_loss":   [round(float(v), 4) for v in h.get('val_loss', [])],
+            "train_auc":  [round(float(v), 4) for v in h.get('auc', [])],
+            "val_auc":    [round(float(v), 4) for v in h.get('val_auc', [])],
+            "train_acc":  [round(float(v), 4) for v in h.get(acc_key, [])],
+            "val_acc":    [round(float(v), 4) for v in h.get(val_acc_key, [])],
+        }
+    }
+    history_path = os.path.join(data_dir, "training_history.json")
+    with open(history_path, "w") as f:
+        json.dump(training_json, f, indent=2)
+
     print("\n[OK] Training complete!")
     print(f"  - Model: {model_path}")
     print(f"  - Preprocessor: {preprocessor_path}")
+    print(f"  - Evaluation: {eval_path}")
+    print(f"  - Training History: {history_path}")
     print(f"  - ROC-AUC: {results['roc_auc']:.4f}")
     print(f"  - PR-AUC: {results['pr_auc']:.4f}")
     print(f"  - F1-Score: {results['f1']:.4f}")

@@ -12,6 +12,7 @@ Multi-page dashboard with:
 import os
 import csv
 import ast
+import json
 import math
 import numpy as np
 import pandas as pd
@@ -19,6 +20,11 @@ import joblib
 import tensorflow as tf
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
+from sklearn.metrics import (
+    confusion_matrix as sk_confusion_matrix,
+    roc_auc_score,
+    average_precision_score,
+)
 
 # ──────────────────────────────────────────────────────────
 # App setup
@@ -54,6 +60,100 @@ if os.path.exists(THRESHOLD_PATH):
     print(f"[*] Using optimal threshold: {THRESHOLD}")
 else:
     print(f"[*] Using default threshold: {THRESHOLD}")
+
+# ──────────────────────────────────────────────────────────
+# Load or compute LIVE evaluation metrics & training history
+# ──────────────────────────────────────────────────────────
+EVAL_JSON_PATH = os.path.join(BASE_DIR, "evaluation_results.json")
+HISTORY_JSON_PATH = os.path.join(BASE_DIR, "training_history.json")
+TEST_CSV_PATH = os.path.join(BASE_DIR, "fraudTest.csv")
+TRAIN_CSV_PATH = os.path.join(BASE_DIR, "fraudTrain.csv")
+
+cached_eval = None
+cached_training = None
+
+# Strategy 1: Load pre-computed results from JSON (saved by fraud_detection.py)
+if os.path.exists(EVAL_JSON_PATH):
+    with open(EVAL_JSON_PATH, "r") as f:
+        cached_eval = json.load(f)
+    print(f"[*] Loaded evaluation metrics from evaluation_results.json")
+
+if os.path.exists(HISTORY_JSON_PATH):
+    with open(HISTORY_JSON_PATH, "r") as f:
+        cached_training = json.load(f)
+    print(f"[*] Loaded training history from training_history.json")
+
+# Strategy 2: If no eval JSON exists, compute LIVE from the test CSV + trained model
+if cached_eval is None and os.path.exists(TEST_CSV_PATH):
+    print("[*] No evaluation_results.json found. Computing LIVE metrics from fraudTest.csv ...")
+    from fraud_detection import preprocess_for_nn
+
+    _df_test = pd.read_csv(TEST_CSV_PATH)
+    _X_test, _y_test, _, _, _ = preprocess_for_nn(
+        _df_test, encoders=encoders, scaler=scaler, fit=False
+    )
+    del _df_test  # free ~150 MB
+
+    _y_prob = model.predict(_X_test, batch_size=4096, verbose=0).flatten()
+    _y_pred = (_y_prob >= THRESHOLD).astype(int)
+
+    _cm = sk_confusion_matrix(_y_test, _y_pred)
+    _tn, _fp, _fn, _tp = _cm.ravel()
+    _accuracy = (_tn + _tp) / (_tn + _fp + _fn + _tp)
+
+    _prec_fraud = float(_tp / (_tp + _fp)) if (_tp + _fp) > 0 else 0.0
+    _rec_fraud  = float(_tp / (_tp + _fn)) if (_tp + _fn) > 0 else 0.0
+    _f1_fraud   = (2 * _prec_fraud * _rec_fraud / (_prec_fraud + _rec_fraud)
+                   if (_prec_fraud + _rec_fraud) > 0 else 0.0)
+    _prec_legit = float(_tn / (_tn + _fn)) if (_tn + _fn) > 0 else 0.0
+    _rec_legit  = float(_tn / (_tn + _fp)) if (_tn + _fp) > 0 else 0.0
+    _f1_legit   = (2 * _prec_legit * _rec_legit / (_prec_legit + _rec_legit)
+                   if (_prec_legit + _rec_legit) > 0 else 0.0)
+
+    _roc = roc_auc_score(_y_test, _y_prob)
+    _pr  = average_precision_score(_y_test, _y_prob)
+
+    # Get training set stats efficiently (just the label column)
+    _total_train, _fraud_rate_train = 0, 0.0
+    if os.path.exists(TRAIN_CSV_PATH):
+        _lbl = pd.read_csv(TRAIN_CSV_PATH, usecols=["is_fraud"])
+        _total_train = len(_lbl)
+        _fraud_rate_train = round(100 * float(_lbl["is_fraud"].mean()), 2)
+        del _lbl
+
+    cached_eval = {
+        "confusion_matrix": {
+            "tn": int(_tn), "fp": int(_fp), "fn": int(_fn), "tp": int(_tp)
+        },
+        "metrics": {
+            "roc_auc":         round(float(_roc), 4),
+            "pr_auc":          round(float(_pr), 4),
+            "accuracy":        round(float(_accuracy), 4),
+            "precision_fraud": round(_prec_fraud, 4),
+            "recall_fraud":    round(_rec_fraud, 4),
+            "f1_fraud":        round(_f1_fraud, 4),
+            "precision_legit": round(_prec_legit, 4),
+            "recall_legit":    round(_rec_legit, 4),
+            "f1_legit":        round(_f1_legit, 4),
+        },
+        "dataset": {
+            "total_train":      _total_train,
+            "total_test":       int(len(_y_test)),
+            "fraud_rate_train": _fraud_rate_train,
+            "fraud_rate_test":  round(100 * float(np.mean(_y_test)), 2),
+        }
+    }
+
+    # Save so next startup is instant
+    with open(EVAL_JSON_PATH, "w") as f:
+        json.dump(cached_eval, f, indent=2)
+    print(f"[*] Live evaluation complete — saved to evaluation_results.json")
+    print(f"    ROC-AUC: {_roc:.4f}  |  PR-AUC: {_pr:.4f}  |  Precision(Fraud): {_prec_fraud:.4f}  |  Recall(Fraud): {_rec_fraud:.4f}")
+    del _X_test, _y_test, _y_prob, _y_pred  # free memory
+
+elif cached_eval is None:
+    print("[!] WARNING: No evaluation data available.")
+    print("[!] Place fraudTest.csv in the project folder, or run 'python fraud_detection.py'.")
 
 # ──────────────────────────────────────────────────────────
 # Extract model architecture info at startup
@@ -284,60 +384,39 @@ def api_architecture():
 
 @app.route("/api/evaluation")
 def api_evaluation():
-    """Return pre-computed evaluation metrics.
-    These are the metrics from the last training run.
-    In a production system you'd store these; here we hardcode
-    the results from our training output."""
-    return jsonify({
-        "confusion_matrix": {
-            "tn": 531909, "fp": 21665,
-            "fn": 154,    "tp": 1991,
-        },
-        "metrics": {
-            "roc_auc": 0.9877,
-            "pr_auc": 0.7042,
-            "accuracy": 0.9607,
-            "precision_fraud": 0.0842,
-            "recall_fraud": 0.9282,
-            "f1_fraud": 0.1543,
-            "precision_legit": 1.0,
-            "recall_legit": 0.9609,
-            "f1_legit": 0.98,
-        },
-        "dataset": {
-            "total_train": 1296675,
-            "total_test": 555719,
-            "fraud_rate_train": 0.58,
-            "fraud_rate_test": 0.39,
-        },
-        "training": {
-            "epochs_completed": 20,
-            "best_epoch": 15,
-            "early_stopped": True,
-            "final_train_acc": 0.9533,
-            "final_train_auc": 0.9902,
-            "final_val_acc": 0.9513,
-            "final_val_auc": 0.9911,
-            "final_val_loss": 0.1181,
-            "learning_rate_final": 0.00025,
-        },
-        # Simulated epoch-by-epoch history for charts
-        "history": {
-            "epochs": list(range(1, 21)),
-            "train_loss": [0.38, 0.22, 0.19, 0.17, 0.16, 0.155, 0.15, 0.148, 0.145, 0.143,
-                           0.141, 0.139, 0.138, 0.137, 0.136, 0.135, 0.134, 0.132, 0.13, 0.125],
-            "val_loss":   [0.20, 0.16, 0.145, 0.135, 0.13, 0.126, 0.123, 0.121, 0.12, 0.119,
-                           0.1185, 0.1182, 0.118, 0.1178, 0.1175, 0.1177, 0.118, 0.1182, 0.1183, 0.1181],
-            "train_auc":  [0.92, 0.96, 0.97, 0.975, 0.978, 0.98, 0.982, 0.983, 0.984, 0.985,
-                           0.986, 0.987, 0.9875, 0.988, 0.9885, 0.989, 0.9892, 0.9895, 0.99, 0.9902],
-            "val_auc":    [0.965, 0.975, 0.98, 0.984, 0.986, 0.987, 0.988, 0.9885, 0.989, 0.9893,
-                           0.9895, 0.99, 0.9903, 0.9905, 0.9903, 0.9905, 0.9907, 0.9908, 0.9909, 0.9911],
-            "train_acc":  [0.88, 0.925, 0.935, 0.94, 0.943, 0.945, 0.946, 0.947, 0.948, 0.949,
-                           0.9495, 0.95, 0.9505, 0.951, 0.9512, 0.9515, 0.952, 0.9525, 0.953, 0.9533],
-            "val_acc":    [0.93, 0.94, 0.945, 0.947, 0.948, 0.949, 0.9495, 0.95, 0.9505, 0.951,
-                           0.9512, 0.9515, 0.9518, 0.952, 0.9522, 0.9525, 0.9528, 0.953, 0.9532, 0.9513],
-        },
-    })
+    """Return evaluation metrics — always read fresh from JSON files."""
+    response = {}
+
+    # Load evaluation results fresh from disk
+    if os.path.exists(EVAL_JSON_PATH):
+        with open(EVAL_JSON_PATH, "r") as f:
+            response = json.load(f)
+    elif cached_eval is not None:
+        response = dict(cached_eval)
+    else:
+        return jsonify({"error": "No evaluation data available. Run fraud_detection.py first."}), 503
+
+    # Load training history fresh from disk
+    if os.path.exists(HISTORY_JSON_PATH):
+        with open(HISTORY_JSON_PATH, "r") as f:
+            training_data = json.load(f)
+        response.update(training_data)
+    elif cached_training is not None:
+        response.update(cached_training)
+    else:
+        # Provide empty structure so the frontend charts don't crash
+        response["training"] = {
+            "epochs_completed": 0, "best_epoch": 0, "early_stopped": False,
+            "final_train_acc": 0, "final_train_auc": 0,
+            "final_val_acc": 0, "final_val_auc": 0,
+            "final_val_loss": 0, "learning_rate_final": 0,
+        }
+        response["history"] = {
+            "epochs": [], "train_loss": [], "val_loss": [],
+            "train_auc": [], "val_auc": [], "train_acc": [], "val_acc": [],
+        }
+
+    return jsonify(response)
 
 
 @app.route("/api/tuning")
