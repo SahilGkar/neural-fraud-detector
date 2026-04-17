@@ -31,8 +31,8 @@ venv\Scripts\activate
 # Install dependencies (first time only)
 pip install -r requirements.txt
 
-# Run main script
-python fraud_detection.py
+# Run the web dashboard
+python app.py
 ```
 
 ---
@@ -75,7 +75,7 @@ pip install -r requirements.txt
 **Step 6: Run Scripts**
 
 ```bash
-python fraud_detection.py
+python app.py
 ```
 
 ```bash
@@ -106,7 +106,7 @@ cd [PROJECT_PATH]
 **Step 3: Create Virtual Environment (First Time)**
 
 ```cmd
-python -m venv venv
+py -3.13 -m venv venv
 ```
 
 **Step 4: Activate Environment**
@@ -124,7 +124,7 @@ pip install -r requirements.txt
 **Step 6: Run Scripts**
 
 ```cmd
-python fraud_detection.py
+python app.py
 ```
 
 ```cmd
@@ -202,6 +202,22 @@ from fraud_detection import preprocess_for_nn, build_model, train_model, evaluat
 ---
 
 ## Running Different Scripts
+
+### app.py (Web Dashboard - Main Entry Point)
+
+```bash
+python app.py
+```
+
+**What it does:**
+1. Serves the interactive HTML frontend using Flask.
+2. Accepts manual inputs or runs data dynamically against the neural network.
+3. Automatically loads `fraud_model.keras` and `preprocessor.pkl`.
+4. Renders live architecture visualization, training curves, and EDA plots.
+
+**Open your browser to: http://127.0.0.1:5000**
+
+---
 
 ### fraud_detection.py (Main Training)
 
@@ -303,7 +319,7 @@ hidden_layers=[128, 64]
 | Create venv | `python3 -m venv venv` | `python -m venv venv` |
 | Activate | `source venv/bin/activate` | `venv\Scripts\activate` |
 | Install | `pip install -r requirements.txt` | `pip install -r requirements.txt` |
-| Run | `python fraud_detection.py` | `python fraud_detection.py` |
+| Run | `python app.py` | `python app.py` |
 | Deactivate | `deactivate` | `deactivate` |
 
 ---
@@ -311,12 +327,15 @@ hidden_layers=[128, 64]
 ## File Structure
 
 ```
-[PROJECT_PATH]/
-├── fraud_detection.py           # Main implementation
+├── app.py                       # Flask Web Dashboard Main Entry Point
+├── templates/                   # HTML Frontend code
+├── static/                      # CSS Styling 
+├── fraud_model.keras            # Trained model
+├── preprocessor.pkl             # Encoders and scaler
+├── fraud_detection.py           # Model training implementation
 ├── tune_model.py                # Hyperparameter tuning
 ├── requirements.txt             # Dependencies
 ├── 01_THEORY_TUTORIAL.md        # Complete theory guide
-├── 02_TASKS_CHECKLIST.md        # Step-by-step learning tasks
 ├── 03_RUN_GUIDE.md              # How to run (this file)
 ├── 04_CODE_GUIDE_fraud_detection.md  # fraud_detection.py explained
 ├── 05_CODE_GUIDE_tune_model.md   # tune_model.py explained
@@ -333,6 +352,7 @@ hidden_layers=[128, 64]
 | Activate (macOS/Linux) | `source venv/bin/activate` |
 | Activate (Windows) | `venv\Scripts\activate` |
 | Install deps | `pip install -r requirements.txt` |
-| Run main | `python fraud_detection.py` |
+| Run dashboard | `python app.py` |
+| Run main training | `python fraud_detection.py` |
 | Run tuning | `python tune_model.py` |
 | Deactivate | `deactivate` |

@@ -24,3 +24,6 @@ Thumbs.db
 .opencode/
 .sisyphus/
 .ruff_cache/
+
+# Lesson Files
+01_THEORY_TUTORIAL.md

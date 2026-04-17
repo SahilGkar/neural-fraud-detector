@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +11,24 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
 <body>
+
+<!-- Theme Toggle (top-right) -->
+<button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+    <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+    <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>
+</button>
 
 <div class="app-shell">
 
@@ -29,9 +47,9 @@
          TAB NAVIGATION
          ═══════════════════════════════════════════════════ -->
     <nav class="tab-nav" role="tablist">
-        <button class="tab-btn active" data-tab="predict" role="tab" aria-selected="true">
-            <span class="tab-icon">🔍</span>
-            <span class="tab-label">Predict</span>
+        <button class="tab-btn active" data-tab="eda" role="tab" aria-selected="true">
+            <span class="tab-icon">📊</span>
+            <span class="tab-label">EDA Analysis</span>
         </button>
         <button class="tab-btn" data-tab="architecture" role="tab">
             <span class="tab-icon">🧠</span>
@@ -41,24 +59,24 @@
             <span class="tab-icon">📈</span>
             <span class="tab-label">Training</span>
         </button>
-        <button class="tab-btn" data-tab="evaluation" role="tab">
-            <span class="tab-icon">📊</span>
-            <span class="tab-label">Evaluation</span>
-        </button>
         <button class="tab-btn" data-tab="tuning" role="tab">
             <span class="tab-icon">⚙️</span>
             <span class="tab-label">Tuning</span>
         </button>
-        <button class="tab-btn" data-tab="eda" role="tab">
+        <button class="tab-btn" data-tab="evaluation" role="tab">
             <span class="tab-icon">📊</span>
-            <span class="tab-label">EDA Analysis</span>
+            <span class="tab-label">Evaluation</span>
+        </button>
+        <button class="tab-btn" data-tab="predict" role="tab">
+            <span class="tab-icon">🔍</span>
+            <span class="tab-label">Predict</span>
         </button>
     </nav>
 
     <!-- ═══════════════════════════════════════════════════
          TAB 1: PREDICT
          ═══════════════════════════════════════════════════ -->
-    <div class="tab-panel active" id="panel-predict" role="tabpanel">
+    <div class="tab-panel" id="panel-predict" role="tabpanel">
 
         <div class="card">
             <div class="card__header">
@@ -164,6 +182,18 @@
             <div class="stat-card"><div class="stat-card__value cyan">15</div><div class="stat-card__label">Input Features</div></div>
         </div>
 
+        <!-- Input Features -->
+        <div class="card">
+            <div class="card__header">
+                <span class="card__header-icon">📐</span>
+                <div>
+                    <div class="card__title">Input Features (15)</div>
+                    <div class="card__subtitle">Features used for fraud prediction</div>
+                </div>
+            </div>
+            <div class="model-info-grid" id="feature-grid"></div>
+        </div>
+
         <!-- Neural Network Diagram -->
         <div class="card">
             <div class="card__header">
@@ -190,18 +220,6 @@
             <div class="layer-grid" id="layer-grid">
                 <div class="loading-overlay"><span class="spinner"></span> Loading architecture...</div>
             </div>
-        </div>
-
-        <!-- Input Features -->
-        <div class="card">
-            <div class="card__header">
-                <span class="card__header-icon">📐</span>
-                <div>
-                    <div class="card__title">Input Features (15)</div>
-                    <div class="card__subtitle">Features used for fraud prediction</div>
-                </div>
-            </div>
-            <div class="model-info-grid" id="feature-grid"></div>
         </div>
     </div>
 
@@ -373,11 +391,11 @@
     <!-- ═══════════════════════════════════════════════════
          TAB 6: EDA ANALYSIS
          ═══════════════════════════════════════════════════ -->
-    <div class="tab-panel" id="panel-eda" role="tabpanel">
+    <div class="tab-panel active" id="panel-eda" role="tabpanel">
 
         <!-- Section Header -->
         <div class="eda-header">
-            <h2 class="eda-header__title">📊 Exploratory Data Analysis — Credit Card Fraud</h2>
+            <h2 class="eda-header__title">Exploratory Data Analysis — Credit Card Fraud</h2>
             <p class="eda-header__subtitle">13 visualizations revealing hidden patterns in the fraud detection dataset</p>
         </div>
 
@@ -406,8 +424,8 @@
                 </div>
                 <div class="eda-card__desc">
                     <p class="eda-card__headline">Fraudsters rarely make small purchases.</p>
-                    <p class="eda-card__insights"><strong>Insights:</strong> Genuine transactions (Blue) peak heavily at low values (under $50) for everyday items like coffee and groceries.</p>
-                    <p class="eda-card__takeaway"><strong>Takeaway:</strong> Fraudulent transactions (Red) have a much flatter, wider distribution, frequently spiking in the $250–$1,000 range. Fraudsters want to maximize their payout before the card is blocked.</p>
+                    <p class="eda-card__insights"><strong>Insights:</strong> Genuine transactions peak heavily at low values (under $50) for everyday items like coffee and groceries.</p>
+                    <p class="eda-card__takeaway"><strong>Takeaway:</strong> Fraudulent transactions have a much flatter, wider distribution, frequently spiking in the $250–$1,000 range. Fraudsters want to maximize their payout before the card is blocked.</p>
                 </div>
             </div>
 
@@ -496,7 +514,7 @@
                 </div>
                 <div class="eda-card__desc">
                     <p class="eda-card__headline">Do fraudsters steal more from men or women?</p>
-                    <p class="eda-card__insights"><strong>Insights:</strong> While genuine transaction averages (Blue) are almost identical for men and women (around $65–$68), the fraudulent amounts (Red) tell a different story — with slightly higher average stolen amounts from female cardholders.</p>
+                    <p class="eda-card__insights"><strong>Insights:</strong> While genuine transaction averages are almost identical for men and women (around $65–$68), the fraudulent amounts tell a different story — with slightly higher average stolen amounts from female cardholders.</p>
                     <p class="eda-card__takeaway"><strong>Takeaway:</strong> This doesn't mean fraudsters are targeting a specific gender on purpose. It usually reflects the credit limits granted to those demographics in the dataset, or the types of merchants they shop at.</p>
                 </div>
             </div>
@@ -589,15 +607,90 @@
      ═══════════════════════════════════════════════════════ -->
 <script>
 (function() {
-    // ─── Chart.js Global Defaults ──────────────────────
-    Chart.defaults.color = '#8b949e';
-    Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
-    Chart.defaults.font.family = "'Inter', sans-serif";
-    Chart.defaults.font.size = 11;
-    Chart.defaults.plugins.legend.labels.usePointStyle = true;
-    Chart.defaults.plugins.legend.labels.pointStyleWidth = 8;
+    // ─── Theme Management ────────────────────────────────
+    const html = document.documentElement;
+    const themeToggle = document.getElementById('theme-toggle');
 
-    // ─── Tab Switching ─────────────────────────────────
+    // Restore saved theme
+    const savedTheme = localStorage.getItem('fd-theme') || 'light';
+    html.setAttribute('data-theme', savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const current = html.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('fd-theme', next);
+        // Re-apply chart colors if charts exist
+        updateChartTheme();
+    });
+
+    function isDark() {
+        return html.getAttribute('data-theme') === 'dark';
+    }
+
+    // ─── Theme-Aware Color Helpers ───────────────────────
+    function C(lightVal, darkVal) {
+        return isDark() ? darkVal : lightVal;
+    }
+
+    function getChartColors() {
+        return {
+            grid:      C('rgba(0,0,0,0.06)', 'rgba(255,255,255,0.06)'),
+            tick:      C('#78716C', '#A8A29E'),
+            labelStrong: C('#1C1917', '#FAF8F5'),
+            blue:      C('#5B7BA4', '#7B9BC4'),
+            terra:     C('#C07A5C', '#D49A7C'),
+            green:     C('#6B8F71', '#8BAF91'),
+            red:       C('#B85450', '#D87470'),
+            amber:     C('#C49B3C', '#D4BB5C'),
+            teal:      C('#5E8C8C', '#7EACAC'),
+            mauve:     C('#8B7BA4', '#AB9BC4'),
+            slate:     C('#7C8B9A', '#9CAABB'),
+            bg:        C('#FAF8F5', '#1C1917'),
+            bgSecondary: C('#F2EFEB', '#292524'),
+        };
+    }
+
+    // ─── Chart.js Global Defaults ────────────────────────
+    function applyChartDefaults() {
+        const c = getChartColors();
+        Chart.defaults.color = c.tick;
+        Chart.defaults.borderColor = c.grid;
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.font.size = 11;
+        Chart.defaults.plugins.legend.labels.usePointStyle = true;
+        Chart.defaults.plugins.legend.labels.pointStyleWidth = 8;
+    }
+    applyChartDefaults();
+
+    // Store chart instances for theme updates
+    const chartInstances = {};
+
+    function updateChartTheme() {
+        applyChartDefaults();
+        // Destroy and reload if tabs were already loaded
+        Object.keys(chartInstances).forEach(key => {
+            if (chartInstances[key]) {
+                chartInstances[key].destroy();
+                chartInstances[key] = null;
+            }
+        });
+        // Re-render active charts
+        Object.keys(loaded).forEach(tab => {
+            loaded[tab] = false;
+        });
+        const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab;
+        if (activeTab) {
+            loaded[activeTab] = true;
+            if (activeTab === 'architecture') loadArchitecture();
+            if (activeTab === 'training')     loadTraining();
+            if (activeTab === 'evaluation')   loadEvaluation();
+            if (activeTab === 'tuning')       loadTuning();
+            if (activeTab === 'eda')          { edaChartsInitialized = false; initEdaCharts(); }
+        }
+    }
+
+    // ─── Tab Switching ───────────────────────────────────
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabPanels = document.querySelectorAll('.tab-panel');
     const loaded = {};
@@ -734,7 +827,7 @@
             });
 
         } catch (err) {
-            document.getElementById('layer-grid').innerHTML = '<div style="padding:20px;color:var(--red)">Error loading architecture</div>';
+            document.getElementById('layer-grid').innerHTML = '<div style="padding:20px;color:var(--color-danger)">Error loading architecture</div>';
         }
     }
 
@@ -742,6 +835,7 @@
         const canvas = document.getElementById('nn-canvas');
         const ctx = canvas.getContext('2d');
         const dpr = window.devicePixelRatio || 1;
+        const c = getChartColors();
 
         canvas.width = canvas.offsetWidth * dpr;
         canvas.height = canvas.offsetHeight * dpr;
@@ -752,11 +846,11 @@
 
         // Define layers to visualize
         const layers = [
-            { label: 'Input', neurons: 15, color: '#22d3ee', sub: '15 features' },
-            { label: 'Dense+BN', neurons: 12, color: '#6366f1', sub: '256 neurons', actual: 256 },
-            { label: 'Dense+BN', neurons: 8,  color: '#818cf8', sub: '128 neurons', actual: 128 },
-            { label: 'Dense+BN', neurons: 5,  color: '#a78bfa', sub: '64 neurons',  actual: 64 },
-            { label: 'Output',   neurons: 1,  color: '#10b981', sub: 'Sigmoid' },
+            { label: 'Input',    neurons: 15, color: c.teal,  sub: '15 features' },
+            { label: 'Dense+BN', neurons: 12, color: c.blue,  sub: '256 neurons', actual: 256 },
+            { label: 'Dense+BN', neurons: 8,  color: c.mauve, sub: '128 neurons', actual: 128 },
+            { label: 'Dense+BN', neurons: 5,  color: c.slate, sub: '64 neurons',  actual: 64 },
+            { label: 'Output',   neurons: 1,  color: c.green, sub: 'Sigmoid' },
         ];
 
         const padding = { x: 60, y: 40 };
@@ -777,17 +871,21 @@
             };
         });
 
-        // Draw connections
+        // Draw connections — smooth bezier curves with layer-tinted color
         for (let i = 0; i < positions.length - 1; i++) {
             const from = positions[i];
             const to = positions[i + 1];
-            ctx.strokeStyle = 'rgba(99,102,241,0.06)';
-            ctx.lineWidth = 0.5;
+            const midX = (from.x + to.x) / 2;
+            // Use the source layer color at a subtle but visible opacity
+            const connAlpha = C('20', '22');  // hex alpha: ~12-13%
+            ctx.strokeStyle = from.color + connAlpha;
+            ctx.lineWidth = 0.8;
             from.neuronPositions.forEach(fp => {
                 to.neuronPositions.forEach(tp => {
                     ctx.beginPath();
                     ctx.moveTo(fp.x, fp.y);
-                    ctx.lineTo(tp.x, tp.y);
+                    // Bezier curve with horizontal control points for smooth arcs
+                    ctx.bezierCurveTo(midX, fp.y, midX, tp.y, tp.x, tp.y);
                     ctx.stroke();
                 });
             });
@@ -798,43 +896,40 @@
             layer.neuronPositions.forEach((pos, ni) => {
                 const r = layer.neurons === 1 ? 12 : 7;
 
-                // Glow
-                const gradient = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, r * 3);
-                gradient.addColorStop(0, layer.color + '30');
-                gradient.addColorStop(1, 'transparent');
-                ctx.fillStyle = gradient;
+                // Subtle halo
+                ctx.fillStyle = layer.color + '18';
                 ctx.beginPath();
-                ctx.arc(pos.x, pos.y, r * 3, 0, Math.PI * 2);
+                ctx.arc(pos.x, pos.y, r * 2.5, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Neuron
+                // Neuron body
                 ctx.fillStyle = layer.color;
                 ctx.beginPath();
                 ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
                 ctx.fill();
 
                 // Border
-                ctx.strokeStyle = layer.color + '80';
-                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = layer.color + '60';
+                ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
                 ctx.stroke();
             });
 
             // Labels
-            ctx.fillStyle = '#e6edf3';
+            ctx.fillStyle = c.labelStrong;
             ctx.font = 'bold 11px Inter';
             ctx.textAlign = 'center';
             ctx.fillText(layer.label, layer.x, H - 12);
 
-            ctx.fillStyle = '#8b949e';
+            ctx.fillStyle = c.tick;
             ctx.font = '10px Inter';
             ctx.fillText(layer.sub, layer.x, H - 0);
 
             // "..." indicator for condensed layers
             if (layer.actual && layer.actual > layer.neurons) {
                 const mid = layer.neuronPositions[Math.floor(layer.neurons / 2)];
-                ctx.fillStyle = layer.color + '60';
+                ctx.fillStyle = layer.color + '50';
                 ctx.font = 'bold 16px Inter';
                 ctx.fillText('...', layer.x + 20, mid.y);
             }
@@ -850,6 +945,7 @@
             const data = await res.json();
             const h = data.history;
             const t = data.training;
+            const c = getChartColors();
 
             // Stats
             document.getElementById('ts-epochs').textContent = t.epochs_completed;
@@ -864,45 +960,48 @@
                 interaction: { mode: 'index', intersect: false },
                 plugins: { legend: { position: 'top' } },
                 scales: {
-                    x: { title: { display: true, text: 'Epoch' }, grid: { color: 'rgba(255,255,255,0.03)' } },
-                    y: { grid: { color: 'rgba(255,255,255,0.03)' } }
+                    x: { title: { display: true, text: 'Epoch' }, grid: { color: c.grid } },
+                    y: { grid: { color: c.grid } }
                 }
             };
 
             // Loss Chart
-            new Chart(document.getElementById('chart-loss'), {
+            if (chartInstances['loss']) chartInstances['loss'].destroy();
+            chartInstances['loss'] = new Chart(document.getElementById('chart-loss'), {
                 type: 'line',
                 data: {
                     labels: h.epochs,
                     datasets: [
-                        { label: 'Train Loss', data: h.train_loss, borderColor: '#6366f1', backgroundColor: 'rgba(99,102,241,0.1)', fill: true, tension: 0.3, pointRadius: 2 },
-                        { label: 'Val Loss',   data: h.val_loss,   borderColor: '#22d3ee', backgroundColor: 'rgba(34,211,238,0.05)', fill: true, tension: 0.3, pointRadius: 2 },
+                        { label: 'Train Loss', data: h.train_loss, borderColor: c.blue, backgroundColor: c.blue + '18', fill: true, tension: 0.3, pointRadius: 2, borderWidth: 2 },
+                        { label: 'Val Loss',   data: h.val_loss,   borderColor: c.teal, backgroundColor: c.teal + '10', fill: true, tension: 0.3, pointRadius: 2, borderWidth: 2 },
                     ]
                 },
                 options: chartOpts
             });
 
             // AUC Chart
-            new Chart(document.getElementById('chart-auc'), {
+            if (chartInstances['auc']) chartInstances['auc'].destroy();
+            chartInstances['auc'] = new Chart(document.getElementById('chart-auc'), {
                 type: 'line',
                 data: {
                     labels: h.epochs,
                     datasets: [
-                        { label: 'Train AUC', data: h.train_auc, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.1)', fill: true, tension: 0.3, pointRadius: 2 },
-                        { label: 'Val AUC',   data: h.val_auc,   borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.05)', fill: true, tension: 0.3, pointRadius: 2 },
+                        { label: 'Train AUC', data: h.train_auc, borderColor: c.green, backgroundColor: c.green + '18', fill: true, tension: 0.3, pointRadius: 2, borderWidth: 2 },
+                        { label: 'Val AUC',   data: h.val_auc,   borderColor: c.amber, backgroundColor: c.amber + '10', fill: true, tension: 0.3, pointRadius: 2, borderWidth: 2 },
                     ]
                 },
                 options: { ...chartOpts, scales: { ...chartOpts.scales, y: { ...chartOpts.scales.y, min: 0.9 } } }
             });
 
             // Accuracy Chart
-            new Chart(document.getElementById('chart-acc'), {
+            if (chartInstances['acc']) chartInstances['acc'].destroy();
+            chartInstances['acc'] = new Chart(document.getElementById('chart-acc'), {
                 type: 'line',
                 data: {
                     labels: h.epochs,
                     datasets: [
-                        { label: 'Train Acc', data: h.train_acc, borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.1)', fill: true, tension: 0.3, pointRadius: 2 },
-                        { label: 'Val Acc',   data: h.val_acc,   borderColor: '#ec4899', backgroundColor: 'rgba(236,72,153,0.05)', fill: true, tension: 0.3, pointRadius: 2 },
+                        { label: 'Train Acc', data: h.train_acc, borderColor: c.mauve, backgroundColor: c.mauve + '18', fill: true, tension: 0.3, pointRadius: 2, borderWidth: 2 },
+                        { label: 'Val Acc',   data: h.val_acc,   borderColor: c.terra, backgroundColor: c.terra + '10', fill: true, tension: 0.3, pointRadius: 2, borderWidth: 2 },
                     ]
                 },
                 options: { ...chartOpts, scales: { ...chartOpts.scales, y: { ...chartOpts.scales.y, min: 0.85 } } }
@@ -934,6 +1033,7 @@
             const m = data.metrics;
             const cm = data.confusion_matrix;
             const ds = data.dataset;
+            const c = getChartColors();
 
             // Stats
             document.getElementById('ev-roc').textContent = m.roc_auc.toFixed(4);
@@ -949,16 +1049,17 @@
             document.getElementById('cm-tp').textContent = cm.tp.toLocaleString();
 
             // Metrics Bar Chart
-            new Chart(document.getElementById('chart-metrics'), {
+            if (chartInstances['metrics']) chartInstances['metrics'].destroy();
+            chartInstances['metrics'] = new Chart(document.getElementById('chart-metrics'), {
                 type: 'bar',
                 data: {
                     labels: ['Precision\n(Legit)', 'Recall\n(Legit)', 'F1\n(Legit)', 'Precision\n(Fraud)', 'Recall\n(Fraud)', 'F1\n(Fraud)'],
                     datasets: [{
                         data: [m.precision_legit, m.recall_legit, m.f1_legit, m.precision_fraud, m.recall_fraud, m.f1_fraud],
-                        backgroundColor: ['#10b98140','#10b98140','#10b98140','#6366f140','#6366f140','#6366f140'],
-                        borderColor:     ['#10b981', '#10b981', '#10b981', '#6366f1', '#6366f1', '#6366f1'],
+                        backgroundColor: [c.green+'40', c.green+'40', c.green+'40', c.blue+'40', c.blue+'40', c.blue+'40'],
+                        borderColor:     [c.green,      c.green,      c.green,      c.blue,      c.blue,      c.blue],
                         borderWidth: 1.5,
-                        borderRadius: 6,
+                        borderRadius: 4,
                     }]
                 },
                 options: {
@@ -966,21 +1067,21 @@
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { grid: { display: false } },
-                        y: { min: 0, max: 1.1, grid: { color: 'rgba(255,255,255,0.03)' } }
+                        y: { min: 0, max: 1.1, grid: { color: c.grid } }
                     }
                 }
             });
 
-            // ROC Curve (simulated smooth curve based on AUC)
+            // ROC Curve
             const rocPoints = [];
             for (let i = 0; i <= 100; i++) {
                 const fpr = i / 100;
-                // Approximate ROC with power curve for AUC=0.9877
                 const tpr = Math.pow(fpr, 0.012);
                 rocPoints.push({ x: fpr, y: Math.min(tpr, 1) });
             }
 
-            new Chart(document.getElementById('chart-roc'), {
+            if (chartInstances['roc']) chartInstances['roc'].destroy();
+            chartInstances['roc'] = new Chart(document.getElementById('chart-roc'), {
                 type: 'scatter',
                 data: {
                     datasets: [
@@ -988,8 +1089,8 @@
                             label: 'ROC Curve',
                             data: rocPoints,
                             showLine: true,
-                            borderColor: '#6366f1',
-                            backgroundColor: 'rgba(99,102,241,0.1)',
+                            borderColor: c.blue,
+                            backgroundColor: c.blue + '18',
                             fill: true,
                             pointRadius: 0,
                             tension: 0.4,
@@ -998,7 +1099,7 @@
                             label: 'Random',
                             data: [{x:0,y:0},{x:1,y:1}],
                             showLine: true,
-                            borderColor: 'rgba(255,255,255,0.15)',
+                            borderColor: C('rgba(0,0,0,0.15)', 'rgba(255,255,255,0.15)'),
                             borderDash: [5,5],
                             pointRadius: 0,
                         }
@@ -1008,8 +1109,8 @@
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { position: 'top' } },
                     scales: {
-                        x: { title: { display: true, text: 'False Positive Rate' }, min: 0, max: 1, grid: { color: 'rgba(255,255,255,0.03)' } },
-                        y: { title: { display: true, text: 'True Positive Rate' },  min: 0, max: 1, grid: { color: 'rgba(255,255,255,0.03)' } }
+                        x: { title: { display: true, text: 'False Positive Rate' }, min: 0, max: 1, grid: { color: c.grid } },
+                        y: { title: { display: true, text: 'True Positive Rate' },  min: 0, max: 1, grid: { color: c.grid } }
                     }
                 }
             });
@@ -1037,7 +1138,8 @@
         try {
             const res = await fetch('/api/tuning');
             const data = await res.json();
-            const trials = data.trials; // already sorted by score desc
+            const trials = data.trials;
+            const c = getChartColors();
 
             // Stats
             document.getElementById('tu-trials').textContent = data.total;
@@ -1049,14 +1151,15 @@
 
             // Chart
             const trialLabels = trials.map(t => 'Trial ' + t.trial);
-            new Chart(document.getElementById('chart-tuning'), {
+            if (chartInstances['tuning']) chartInstances['tuning'].destroy();
+            chartInstances['tuning'] = new Chart(document.getElementById('chart-tuning'), {
                 type: 'bar',
                 data: {
                     labels: trialLabels,
                     datasets: [
-                        { label: 'ROC-AUC', data: trials.map(t => t.roc_auc), backgroundColor: 'rgba(99,102,241,0.5)', borderColor: '#6366f1', borderWidth: 1, borderRadius: 4 },
-                        { label: 'PR-AUC',  data: trials.map(t => t.pr_auc),  backgroundColor: 'rgba(16,185,129,0.5)', borderColor: '#10b981', borderWidth: 1, borderRadius: 4 },
-                        { label: 'Score',    data: trials.map(t => t.score),   backgroundColor: 'rgba(245,158,11,0.5)', borderColor: '#f59e0b', borderWidth: 1, borderRadius: 4 },
+                        { label: 'ROC-AUC', data: trials.map(t => t.roc_auc), backgroundColor: c.blue + '70', borderColor: c.blue, borderWidth: 1, borderRadius: 4 },
+                        { label: 'PR-AUC',  data: trials.map(t => t.pr_auc),  backgroundColor: c.green + '70', borderColor: c.green, borderWidth: 1, borderRadius: 4 },
+                        { label: 'Score',    data: trials.map(t => t.score),   backgroundColor: c.amber + '70', borderColor: c.amber, borderWidth: 1, borderRadius: 4 },
                     ]
                 },
                 options: {
@@ -1064,7 +1167,7 @@
                     plugins: { legend: { position: 'top' } },
                     scales: {
                         x: { grid: { display: false } },
-                        y: { min: 0.5, max: 1, grid: { color: 'rgba(255,255,255,0.03)' } }
+                        y: { min: 0.5, max: 1, grid: { color: c.grid } }
                     }
                 }
             });
@@ -1103,20 +1206,19 @@
         if (edaChartsInitialized) return;
         edaChartsInitialized = true;
 
-        const edaGridColor = 'rgba(255,255,255,0.05)';
-        const edaTickColor = '#8b949e';
+        const c = getChartColors();
 
         // ─── Chart 1: Class Imbalance (Logarithmic Bar) ───
-        new Chart(document.getElementById('eda-chart-1'), {
+        chartInstances['eda1'] = new Chart(document.getElementById('eda-chart-1'), {
             type: 'bar',
             data: {
                 labels: ['Genuine (99.58%)', 'Fraud (0.42%)'],
                 datasets: [{
                     data: [553574, 2145],
-                    backgroundColor: ['#1f77b4', '#d62728'],
-                    borderColor: ['#1f77b4', '#d62728'],
+                    backgroundColor: [c.blue, c.red],
+                    borderColor: [c.blue, c.red],
                     borderWidth: 1,
-                    borderRadius: 6
+                    borderRadius: 4
                 }]
             },
             options: {
@@ -1130,11 +1232,11 @@
                 scales: {
                     y: {
                         type: 'logarithmic',
-                        grid: { color: edaGridColor },
-                        ticks: { color: edaTickColor, callback: v => v.toLocaleString() },
-                        title: { display: true, text: 'Number of Transactions (Log Scale)', color: edaTickColor }
+                        grid: { color: c.grid },
+                        ticks: { color: c.tick, callback: v => v.toLocaleString() },
+                        title: { display: true, text: 'Number of Transactions (Log Scale)', color: c.tick }
                     },
-                    x: { grid: { display: false }, ticks: { color: edaTickColor, font: { weight: 'bold' } } }
+                    x: { grid: { display: false }, ticks: { color: c.tick, font: { weight: 'bold' } } }
                 }
             },
             plugins: [{
@@ -1142,7 +1244,7 @@
                     const ctx2 = chart.ctx;
                     chart.data.datasets[0].data.forEach((value, index) => {
                         const meta = chart.getDatasetMeta(0).data[index];
-                        ctx2.fillStyle = '#e6edf3';
+                        ctx2.fillStyle = c.labelStrong;
                         ctx2.font = 'bold 12px Inter';
                         ctx2.textAlign = 'center';
                         ctx2.fillText(value.toLocaleString(), meta.x, meta.y - 8);
@@ -1153,7 +1255,7 @@
 
         // ─── Chart 2: Transaction Amounts (KDE Lines) ───
         const amtLabels = ['$0','$50','$100','$150','$200','$250','$300','$350','$400','$450','$500','$550','$600','$650','$700','$750','$800','$850','$900','$950'];
-        new Chart(document.getElementById('eda-chart-2'), {
+        chartInstances['eda2'] = new Chart(document.getElementById('eda-chart-2'), {
             type: 'line',
             data: {
                 labels: amtLabels,
@@ -1161,15 +1263,15 @@
                     {
                         label: 'Genuine',
                         data: [0.08,0.060,0.035,0.020,0.012,0.009,0.007,0.006,0.005,0.005,0.004,0.004,0.003,0.003,0.003,0.002,0.002,0.002,0.002,0.001],
-                        borderColor: '#1f77b4',
-                        backgroundColor: 'rgba(31,119,180,0.3)',
+                        borderColor: c.blue,
+                        backgroundColor: c.blue + '30',
                         fill: true, tension: 0.4, pointRadius: 2, borderWidth: 2
                     },
                     {
                         label: 'Fraud',
                         data: [0.02,0.018,0.017,0.016,0.015,0.015,0.014,0.013,0.013,0.012,0.012,0.011,0.010,0.010,0.009,0.009,0.008,0.008,0.007,0.007],
-                        borderColor: '#d62728',
-                        backgroundColor: 'rgba(214,39,40,0.3)',
+                        borderColor: c.red,
+                        backgroundColor: c.red + '30',
                         fill: true, tension: 0.4, pointRadius: 2, borderWidth: 2
                     }
                 ]
@@ -1178,15 +1280,15 @@
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { position: 'top' } },
                 scales: {
-                    y: { title: { display: true, text: 'Density', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } },
-                    x: { title: { display: true, text: 'Transaction Amount ($)', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor, maxRotation: 45 } }
+                    y: { title: { display: true, text: 'Density', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } },
+                    x: { title: { display: true, text: 'Transaction Amount ($)', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick, maxRotation: 45 } }
                 }
             }
         });
 
         // ─── Chart 3: Time of Day (Line with Markers) ───
         const hourLabels = ['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23'];
-        new Chart(document.getElementById('eda-chart-3'), {
+        chartInstances['eda3'] = new Chart(document.getElementById('eda-chart-3'), {
             type: 'line',
             data: {
                 labels: hourLabels,
@@ -1194,14 +1296,14 @@
                     {
                         label: 'Genuine (%)',
                         data: [2.1,1.4,1.0,0.8,0.7,0.9,1.8,3.2,4.5,5.1,5.5,5.4,5.8,5.6,5.3,5.2,5.0,5.0,4.8,4.5,4.2,3.9,3.5,2.8],
-                        borderColor: '#1f77b4', backgroundColor: '#1f77b4',
-                        pointRadius: 4, borderWidth: 2, tension: 0.3
+                        borderColor: c.blue, backgroundColor: c.blue,
+                        pointRadius: 3, borderWidth: 2, tension: 0.3
                     },
                     {
                         label: 'Fraud (%)',
                         data: [8.5,10.2,11.8,9.6,4.1,2.8,2.1,1.9,2.0,2.4,3.0,3.2,3.8,3.6,3.4,3.3,3.5,4.0,4.5,5.2,5.8,6.5,7.1,8.0],
-                        borderColor: '#d62728', backgroundColor: '#d62728',
-                        pointRadius: 4, borderWidth: 2, tension: 0.3
+                        borderColor: c.red, backgroundColor: c.red,
+                        pointRadius: 3, borderWidth: 2, tension: 0.3
                     }
                 ]
             },
@@ -1209,20 +1311,22 @@
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { position: 'top' } },
                 scales: {
-                    y: { title: { display: true, text: 'Percentage of Transactions (%)', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } },
-                    x: { title: { display: true, text: 'Hour of the Day (0–23)', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } }
+                    y: { title: { display: true, text: 'Percentage of Transactions (%)', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } },
+                    x: { title: { display: true, text: 'Hour of the Day (0–23)', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } }
                 }
             }
         });
 
         // ─── Chart 4: Merchant Categories (Horizontal Bar) ───
-        new Chart(document.getElementById('eda-chart-4'), {
+        // Generate a warm-to-cool gradient using the terra color family
+        const cat4Colors = [c.red, c.red+'E0', c.red+'C0', c.red+'A0', c.terra, c.terra+'E0', c.terra+'C0', c.terra+'A0', c.amber, c.amber+'E0', c.amber+'C0', c.amber+'A0'];
+        chartInstances['eda4'] = new Chart(document.getElementById('eda-chart-4'), {
             type: 'bar',
             data: {
                 labels: ['shopping_net','grocery_pos','misc_net','shopping_pos','entertainment','food_dining','home','kids_pets','personal_care','health_fitness','gas_transport','travel'],
                 datasets: [{
                     data: [7.5, 6.8, 5.9, 5.2, 4.1, 2.9, 2.7, 2.4, 2.1, 1.8, 1.5, 1.2],
-                    backgroundColor: ['#7f0000','#a00000','#b52a2a','#c84040','#d65050','#de6868','#e57f7f','#ec9999','#f0aaaa','#f4bbbb','#f8cccc','#fde0e0'],
+                    backgroundColor: cat4Colors,
                     borderRadius: 4
                 }]
             },
@@ -1231,14 +1335,14 @@
                 indexAxis: 'y',
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { title: { display: true, text: 'Percentage of Transactions that are Fraudulent (%)', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } },
-                    y: { grid: { display: false }, ticks: { color: edaTickColor, font: { family: "'JetBrains Mono', monospace", size: 11 } } }
+                    x: { title: { display: true, text: 'Percentage of Transactions that are Fraudulent (%)', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } },
+                    y: { grid: { display: false }, ticks: { color: c.tick, font: { family: "'JetBrains Mono', monospace", size: 11 } } }
                 }
             }
         });
 
         // ─── Chart 5: Age Distribution (Overlapping Density) ───
-        new Chart(document.getElementById('eda-chart-5'), {
+        chartInstances['eda5'] = new Chart(document.getElementById('eda-chart-5'), {
             type: 'line',
             data: {
                 labels: ['18','23','28','33','38','43','48','53','58','63','68','73','78','83','88'],
@@ -1246,13 +1350,13 @@
                     {
                         label: 'Genuine',
                         data: [0.010,0.030,0.055,0.075,0.085,0.085,0.080,0.075,0.065,0.055,0.045,0.030,0.015,0.005,0.002],
-                        borderColor: '#1f77b4', backgroundColor: 'rgba(31,119,180,0.35)',
+                        borderColor: c.blue, backgroundColor: c.blue + '30',
                         fill: true, tension: 0.4, pointRadius: 3, borderWidth: 2
                     },
                     {
                         label: 'Fraud',
                         data: [0.012,0.028,0.050,0.070,0.082,0.084,0.080,0.074,0.064,0.054,0.044,0.029,0.014,0.005,0.002],
-                        borderColor: '#d62728', backgroundColor: 'rgba(214,39,40,0.35)',
+                        borderColor: c.red, backgroundColor: c.red + '30',
                         fill: true, tension: 0.4, pointRadius: 3, borderWidth: 2
                     }
                 ]
@@ -1261,14 +1365,14 @@
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { position: 'top' } },
                 scales: {
-                    y: { title: { display: true, text: 'Density', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } },
-                    x: { title: { display: true, text: 'Age of Cardholder', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } }
+                    y: { title: { display: true, text: 'Density', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } },
+                    x: { title: { display: true, text: 'Age of Cardholder', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } }
                 }
             }
         });
 
         // ─── Chart 6: Distance to Merchant (Grouped Bar Summary) ───
-        new Chart(document.getElementById('eda-chart-6'), {
+        chartInstances['eda6'] = new Chart(document.getElementById('eda-chart-6'), {
             type: 'bar',
             data: {
                 labels: ['Q1 (25th %ile)', 'Median', 'Mean', 'Q3 (75th %ile)'],
@@ -1276,14 +1380,14 @@
                     {
                         label: 'Genuine',
                         data: [3.2, 15.8, 28.4, 42.0],
-                        backgroundColor: 'rgba(31,119,180,0.7)',
-                        borderColor: '#1f77b4', borderWidth: 1, borderRadius: 4
+                        backgroundColor: c.blue + '90',
+                        borderColor: c.blue, borderWidth: 1, borderRadius: 4
                     },
                     {
                         label: 'Fraud',
                         data: [4.1, 17.2, 31.6, 45.3],
-                        backgroundColor: 'rgba(214,39,40,0.7)',
-                        borderColor: '#d62728', borderWidth: 1, borderRadius: 4
+                        backgroundColor: c.red + '90',
+                        borderColor: c.red, borderWidth: 1, borderRadius: 4
                     }
                 ]
             },
@@ -1291,21 +1395,21 @@
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { position: 'top' } },
                 scales: {
-                    y: { title: { display: true, text: 'Distance (km)', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } },
-                    x: { grid: { display: false }, ticks: { color: edaTickColor } }
+                    y: { title: { display: true, text: 'Distance (km)', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } },
+                    x: { grid: { display: false }, ticks: { color: c.tick } }
                 }
             }
         });
 
         // ─── Chart 7: Fraud by Day of Week ───
-        new Chart(document.getElementById('eda-chart-7'), {
+        chartInstances['eda7'] = new Chart(document.getElementById('eda-chart-7'), {
             type: 'bar',
             data: {
                 labels: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
                 datasets: [{
                     data: [0.39, 0.41, 0.40, 0.43, 0.42, 0.46, 0.47],
-                    backgroundColor: 'rgba(214,39,40,0.8)',
-                    borderColor: '#d62728', borderWidth: 1, borderRadius: 6
+                    backgroundColor: c.red + 'B0',
+                    borderColor: c.red, borderWidth: 1, borderRadius: 4
                 }]
             },
             options: {
@@ -1313,11 +1417,11 @@
                 plugins: { legend: { display: false } },
                 scales: {
                     y: {
-                        title: { display: true, text: 'Fraud Rate (%)', color: edaTickColor },
+                        title: { display: true, text: 'Fraud Rate (%)', color: c.tick },
                         min: 0, max: 0.6,
-                        grid: { color: edaGridColor }, ticks: { color: edaTickColor }
+                        grid: { color: c.grid }, ticks: { color: c.tick }
                     },
-                    x: { grid: { display: false }, ticks: { color: edaTickColor } }
+                    x: { grid: { display: false }, ticks: { color: c.tick } }
                 }
             },
             plugins: [{
@@ -1325,7 +1429,7 @@
                     const ctx2 = chart.ctx;
                     chart.data.datasets[0].data.forEach((value, index) => {
                         const meta = chart.getDatasetMeta(0).data[index];
-                        ctx2.fillStyle = '#e6edf3';
+                        ctx2.fillStyle = c.labelStrong;
                         ctx2.font = 'bold 11px Inter';
                         ctx2.textAlign = 'center';
                         ctx2.fillText(value + '%', meta.x, meta.y - 6);
@@ -1335,7 +1439,7 @@
         });
 
         // ─── Chart 8: Gender Split (Grouped Bar) ───
-        new Chart(document.getElementById('eda-chart-8'), {
+        chartInstances['eda8'] = new Chart(document.getElementById('eda-chart-8'), {
             type: 'bar',
             data: {
                 labels: ['Female', 'Male'],
@@ -1343,14 +1447,14 @@
                     {
                         label: 'Genuine',
                         data: [65, 68],
-                        backgroundColor: '#1f77b4',
-                        borderRadius: 6
+                        backgroundColor: c.blue,
+                        borderRadius: 4
                     },
                     {
                         label: 'Fraud',
                         data: [530, 515],
-                        backgroundColor: '#d62728',
-                        borderRadius: 6
+                        backgroundColor: c.red,
+                        borderRadius: 4
                     }
                 ]
             },
@@ -1358,8 +1462,8 @@
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { position: 'top' } },
                 scales: {
-                    y: { title: { display: true, text: 'Average Transaction Amount ($)', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } },
-                    x: { grid: { display: false }, ticks: { color: edaTickColor, font: { weight: 'bold' } } }
+                    y: { title: { display: true, text: 'Average Transaction Amount ($)', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } },
+                    x: { grid: { display: false }, ticks: { color: c.tick, font: { weight: 'bold' } } }
                 }
             },
             plugins: [{
@@ -1367,7 +1471,7 @@
                     const ctx2 = chart.ctx;
                     chart.data.datasets.forEach((dataset, di) => {
                         chart.getDatasetMeta(di).data.forEach((bar, i) => {
-                            ctx2.fillStyle = '#e6edf3';
+                            ctx2.fillStyle = c.labelStrong;
                             ctx2.font = 'bold 11px Inter';
                             ctx2.textAlign = 'center';
                             ctx2.fillText('$' + dataset.data[i], bar.x, bar.y - 6);
@@ -1378,43 +1482,44 @@
         });
 
         // ─── Chart 9: Top 10 States ───
-        new Chart(document.getElementById('eda-chart-9'), {
+        const stateColors = [c.terra, c.terra+'E8', c.terra+'D0', c.terra+'B8', c.terra+'A0', c.amber, c.amber+'E0', c.amber+'C0', c.amber+'A0', c.amber+'80'];
+        chartInstances['eda9'] = new Chart(document.getElementById('eda-chart-9'), {
             type: 'bar',
             data: {
                 labels: ['AK','OR','MT','WY','HI','NM','SD','ND','VT','ME'],
                 datasets: [{
                     data: [1.20, 0.90, 0.85, 0.80, 0.78, 0.75, 0.72, 0.71, 0.70, 0.68],
-                    backgroundColor: ['#7f2c00','#993500','#b34000','#cc4c00','#e55b00','#f56b14','#f87e30','#fa9250','#fca870','#fdbf90'],
-                    borderRadius: 6
+                    backgroundColor: stateColors,
+                    borderRadius: 4
                 }]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { title: { display: true, text: 'Fraud Rate (%)', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } },
-                    x: { title: { display: true, text: 'State Code', color: edaTickColor }, grid: { display: false }, ticks: { color: edaTickColor, font: { weight: 'bold' } } }
+                    y: { title: { display: true, text: 'Fraud Rate (%)', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } },
+                    x: { title: { display: true, text: 'State Code', color: c.tick }, grid: { display: false }, ticks: { color: c.tick, font: { weight: 'bold' } } }
                 }
             }
         });
 
         // ─── Chart 10: Urban vs Rural ───
-        new Chart(document.getElementById('eda-chart-10'), {
+        chartInstances['eda10'] = new Chart(document.getElementById('eda-chart-10'), {
             type: 'bar',
             data: {
                 labels: ['Rural (<50k)', 'Suburban (50k–250k)', 'Urban (>250k)'],
                 datasets: [{
                     data: [0.51, 0.41, 0.38],
-                    backgroundColor: ['#6a0dad','#8b2be2','#b06fd4'],
-                    borderRadius: 6
+                    backgroundColor: [c.mauve, c.mauve+'C0', c.mauve+'80'],
+                    borderRadius: 4
                 }]
             },
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { title: { display: true, text: 'Fraud Rate (%)', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } },
-                    x: { title: { display: true, text: 'City Population Size', color: edaTickColor }, grid: { display: false }, ticks: { color: edaTickColor } }
+                    y: { title: { display: true, text: 'Fraud Rate (%)', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } },
+                    x: { title: { display: true, text: 'City Population Size', color: c.tick }, grid: { display: false }, ticks: { color: c.tick } }
                 }
             },
             plugins: [{
@@ -1422,7 +1527,7 @@
                     const ctx2 = chart.ctx;
                     chart.data.datasets[0].data.forEach((value, index) => {
                         const meta = chart.getDatasetMeta(0).data[index];
-                        ctx2.fillStyle = '#e6edf3';
+                        ctx2.fillStyle = c.labelStrong;
                         ctx2.font = 'bold 11px Inter';
                         ctx2.textAlign = 'center';
                         ctx2.fillText(value + '%', meta.x, meta.y - 6);
@@ -1432,15 +1537,15 @@
         });
 
         // ─── Chart 11: Stolen Funds by Category (Horizontal Bar) ───
-        new Chart(document.getElementById('eda-chart-11'), {
+        chartInstances['eda11'] = new Chart(document.getElementById('eda-chart-11'), {
             type: 'bar',
             data: {
                 labels: ['shopping_pos','misc_net','grocery_pos','shopping_net','travel','misc_pos','entertainment','home','personal_care','kids_pets','food_dining','health_fitness','gas_transport'],
                 datasets: [{
                     label: 'Median Stolen Amount ($)',
                     data: [560, 490, 320, 310, 420, 280, 260, 245, 220, 200, 185, 175, 65],
-                    backgroundColor: 'rgba(214,39,40,0.75)',
-                    borderColor: '#d62728', borderWidth: 1, borderRadius: 4
+                    backgroundColor: c.red + 'A0',
+                    borderColor: c.red, borderWidth: 1, borderRadius: 4
                 }]
             },
             options: {
@@ -1448,17 +1553,17 @@
                 indexAxis: 'y',
                 plugins: {
                     legend: { display: false },
-                    subtitle: { display: true, text: 'Outliers excluded. Shows median stolen amount.', color: '#8b949e', font: { size: 10, style: 'italic' }, padding: { bottom: 10 } }
+                    subtitle: { display: true, text: 'Outliers excluded. Shows median stolen amount.', color: c.tick, font: { size: 10, style: 'italic' }, padding: { bottom: 10 } }
                 },
                 scales: {
-                    x: { title: { display: true, text: 'Transaction Amount ($)', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } },
-                    y: { grid: { display: false }, ticks: { color: edaTickColor, font: { family: "'JetBrains Mono', monospace", size: 10 } } }
+                    x: { title: { display: true, text: 'Transaction Amount ($)', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } },
+                    y: { grid: { display: false }, ticks: { color: c.tick, font: { family: "'JetBrains Mono', monospace", size: 10 } } }
                 }
             }
         });
 
         // ─── Chart 12: Most Exploited Merchants (Horizontal Bar) ───
-        new Chart(document.getElementById('eda-chart-12'), {
+        chartInstances['eda12'] = new Chart(document.getElementById('eda-chart-12'), {
             type: 'bar',
             data: {
                 labels: [
@@ -1468,7 +1573,9 @@
                 ],
                 datasets: [{
                     data: [42, 39, 37, 35, 33, 31, 30, 29, 28, 27],
-                    backgroundColor: '#8b0000',
+                    backgroundColor: c.red + '90',
+                    borderColor: c.red,
+                    borderWidth: 1,
                     borderRadius: 4
                 }]
             },
@@ -1477,8 +1584,8 @@
                 indexAxis: 'y',
                 plugins: { legend: { display: false } },
                 scales: {
-                    x: { title: { display: true, text: 'Number of Fraudulent Transactions', color: edaTickColor }, grid: { color: edaGridColor }, ticks: { color: edaTickColor } },
-                    y: { grid: { display: false }, ticks: { color: edaTickColor, font: { family: "'JetBrains Mono', monospace", size: 10 } } }
+                    x: { title: { display: true, text: 'Number of Fraudulent Transactions', color: c.tick }, grid: { color: c.grid }, ticks: { color: c.tick } },
+                    y: { grid: { display: false }, ticks: { color: c.tick, font: { family: "'JetBrains Mono', monospace", size: 10 } } }
                 }
             }
         });
@@ -1488,8 +1595,9 @@
     }
 
     function buildCorrelationHeatmap() {
+        const c = getChartColors();
         const features = ['amt','hour','age','lat','merch_lat','distance_km','long','merch_long','cc_num','zip','city_pop','unix_time','is_fraud'];
-        // Symmetric correlation matrix (simplified key correlations)
+        // Symmetric correlation matrix
         const matrix = {
             'amt':         { 'amt':1.00,'hour':-0.01,'age':0.002,'lat':0.005,'merch_lat':0.005,'distance_km':0.003,'long':0.002,'merch_long':0.002,'cc_num':-0.001,'zip':0.001,'city_pop':0.003,'unix_time':0.005,'is_fraud':0.18 },
             'hour':        { 'amt':-0.01,'hour':1.00,'age':0.001,'lat':0.002,'merch_lat':0.002,'distance_km':0.001,'long':0.001,'merch_long':0.001,'cc_num':0.001,'zip':0.001,'city_pop':0.002,'unix_time':0.01,'is_fraud':0.01 },
@@ -1507,28 +1615,29 @@
         };
 
         function corrColor(value) {
-            if (value >= 0.99) return '#1a1a2e';  // diagonal
-            if (value > 0.5) return '#b91c1c';
-            if (value > 0.15) return '#dc2626';
-            if (value > 0.05) return '#f87171';
-            if (value > 0.01) return '#fca5a5';
-            if (value > -0.01) return '#1e293b';
-            if (value > -0.05) return '#93c5fd';
-            if (value > -0.15) return '#60a5fa';
-            if (value > -0.5) return '#3b82f6';
-            return '#1d4ed8';
+            const dark = isDark();
+            if (value >= 0.99) return dark ? '#44403C' : '#E7E5E4';  // diagonal
+            if (value > 0.5)  return dark ? '#8B4A3A' : '#C07A5C';
+            if (value > 0.15) return dark ? '#A85C4C' : '#D49A7C';
+            if (value > 0.05) return dark ? '#6E4A40' : '#E8C8B0';
+            if (value > 0.01) return dark ? '#4A3830' : '#F0DDD0';
+            if (value > -0.01) return dark ? '#292524' : '#F5F2EE';
+            if (value > -0.05) return dark ? '#2E3A4A' : '#D0DEE8';
+            if (value > -0.15) return dark ? '#3A5068' : '#BDD0E7';
+            if (value > -0.5)  return dark ? '#3D6390' : '#7B9BC4';
+            return dark ? '#2A4A6E' : '#5B7BA4';
         }
 
         function textColor(value) {
+            const dark = isDark();
             const absV = Math.abs(value);
-            if (value >= 0.99) return '#e6edf3';
-            if (absV > 0.3) return '#fff';
-            if (absV > 0.1) return '#fff';
-            return '#c9d1d9';
+            if (value >= 0.99) return dark ? '#FAF8F5' : '#1C1917';
+            if (absV > 0.3) return '#FAF8F5';
+            if (absV > 0.1) return dark ? '#FAF8F5' : '#1C1917';
+            return dark ? '#A8A29E' : '#78716C';
         }
 
         const container = document.getElementById('eda-heatmap');
-        const cols = features.length + 1;
         let html = '<div style="overflow-x:auto;"><table class="eda-corr-table"><thead><tr><th></th>';
         features.forEach(f => { html += '<th>' + f + '</th>'; });
         html += '</tr></thead><tbody>';
@@ -1548,7 +1657,7 @@
 
         html += '</tbody></table></div>';
 
-        // Add color scale legend
+        // Color scale legend
         html += '<div class="eda-corr-legend">';
         html += '<span class="eda-corr-legend__label">−1.0</span>';
         html += '<div class="eda-corr-legend__bar"></div>';
