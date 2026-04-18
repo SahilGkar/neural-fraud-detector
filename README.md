@@ -25,6 +25,7 @@ This model was formulated using a comprehensive simulated credit card transactio
 - **`fraudTrain.csv`**: Contains roughly **1.3 million rows** of simulated transaction data to train the intricate internal weights of the neural network.
 - **`fraudTest.csv`**: Contains roughly **500,000+ rows** of unseen validation data to test the final model's metrics (Accuracy, Precision, Recall).
 - **Extracted Features**: Merchant Category, Transaction Amount, User Gender, State, Client Latitude/Longitude, Merchant Latitude/Longitude, City Population, and specific transaction timings (Age at transaction, Hour, Day, Month).
+- **Link**: https://www.kaggle.com/datasets/kartik2112/fraud-detection?select=fraudTest.csv
 
 > **⚠️ NOTE:** Because the CSV dataset files exceed 300MB, they are **not** included in this GitHub repository to abide by Git limits. To train the model from scratch on your end, you must download the raw dataset from your provider and place the CSVs in this root directory.
 
